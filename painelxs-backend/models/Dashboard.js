@@ -1,11 +1,18 @@
-const mongoose = require('mongoose');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./data.db'); // Use um arquivo de banco de dados SQLite
 
-const DashboardSchema = new mongoose.Schema({
-  totalVendas: { type: Number, required: true },
-  novosClientes: { type: Number, required: true },
-  totalPedidosHoje: { type: Number, required: true },
-  totalPedidos30Dias: { type: Number, required: true },
-  data: { type: Date, default: Date.now }
+// Cria a tabela se não existir
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS dashboard (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      totalVendas INTEGER,
+      novosClientes INTEGER,
+      totalPedidosHoje INTEGER,
+      totalPedidos30Dias INTEGER,
+      data TEXT
+    )
+  `);
 });
 
-module.exports = mongoose.model('Dashboard', DashboardSchema);
+module.exports = db;
