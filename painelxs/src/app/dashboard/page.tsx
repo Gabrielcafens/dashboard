@@ -43,7 +43,7 @@ export default function DashboardPage() {
   if (error) return <p>Erro: {error}</p>;
 
   return (
-    <div className="p-4">
+    <div className="flex flex-col p-4 pl-64"> {/* Ajuste o padding-left conforme a largura da sua barra lateral */}
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       {data.length > 0 ? (
         data.map((item) => (
