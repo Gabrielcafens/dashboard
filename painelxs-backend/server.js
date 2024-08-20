@@ -1,10 +1,18 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors'); // Importe o pacote CORS
 const app = express();
 const port = 3001;
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+// Configuração do CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // Substitua pela URL do seu frontend
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+}));
 
 // Conectar ao banco de dados SQLite
 const db = new sqlite3.Database('./data.db');
