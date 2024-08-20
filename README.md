@@ -1,5 +1,3 @@
-# Criar README para o Frontend (painelxs)
-cat <<EOL > painelxs/README.md
 # PainelXS - Frontend
 
 ## Descrição
@@ -30,6 +28,7 @@ O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript,
 
   ```bash
    git clone https://github.com/seu-usuario/painelxs.git
+```
    cd painelxs
   ```
 
@@ -128,4 +127,4 @@ O **PainelXS Backend** é um serviço de backend desenvolvido com Node.js e Expr
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
-EOL
+
