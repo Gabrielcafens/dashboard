@@ -11,35 +11,79 @@ const getRandomDate = () => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
 };
 
+// Função para gerar um nome aleatório
+const getRandomName = () => {
+  const names = ['João', 'Maria', 'Pedro', 'Ana', 'Carlos', 'Fernanda', 'José', 'Juliana'];
+  return names[Math.floor(Math.random() * names.length)];
+};
+
+// Função para gerar um email aleatório
+const getRandomEmail = () => {
+  const domains = ['example.com', 'test.com', 'demo.com'];
+  const name = getRandomName().toLowerCase();
+  const domain = domains[Math.floor(Math.random() * domains.length)];
+  return `${name}_${getRandomInt(1000, 9999)}@${domain}`; // Adiciona um número aleatório ao email
+};
+
+// Função para gerar uma senha aleatória
+const getRandomPassword = () => {
+  return Math.random().toString(36).slice(-8); // Senha de 8 caracteres aleatórios
+};
+
+// Função para verificar se o email já existe
+const emailExists = (email, callback) => {
+  db.get('SELECT 1 FROM usuarios WHERE email = ?', [email], (err, row) => {
+    if (err) {
+      console.error('Erro ao verificar email:', err.message);
+      callback(err);
+    } else {
+      callback(null, !!row);
+    }
+  });
+};
+
 // Inserir dados aleatórios
-const insertRandomData = (numRecords) => {
+const insertRandomUsers = (numRecords) => {
   const stmt = db.prepare(`
-    INSERT INTO dashboard (totalVendas, novosClientes, totalPedidosHoje, totalPedidos30Dias, data)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO usuarios (nome, email, senha, dataCriacao)
+    VALUES (?, ?, ?, ?)
   `);
 
   let count = 0;
 
   const insertNext = () => {
     if (count < numRecords) {
-      const totalVendas = getRandomInt(10000, 50000);
-      const novosClientes = getRandomInt(50, 300);
-      const totalPedidosHoje = getRandomInt(10, 100);
-      const totalPedidos30Dias = getRandomInt(1000, 3000);
-      const data = getRandomDate();
+      const nome = getRandomName();
+      let email = getRandomEmail();
 
-      stmt.run(totalVendas, novosClientes, totalPedidosHoje, totalPedidos30Dias, data, (err) => {
+      emailExists(email, (err, exists) => {
         if (err) {
-          console.error('Erro ao inserir dados:', err.message);
+          console.error('Erro ao verificar email:', err.message);
+          return;
+        }
+
+        if (exists) {
+          // Se o email já existe, gera um novo
+          email = getRandomEmail();
+          insertNext(); // Tenta inserir novamente
         } else {
-          console.log(`Registro ${count + 1} inserido.`);
-          count++;
-          insertNext();
+          const senha = getRandomPassword();
+          const dataCriacao = getRandomDate();
+
+          stmt.run(nome, email, senha, dataCriacao, (err) => {
+            if (err) {
+              console.error('Erro ao inserir dados:', err.message);
+            } else {
+              console.log(`Usuário ${count + 1} inserido.`);
+              count++;
+              insertNext();
+            }
+          });
         }
       });
     } else {
       stmt.finalize(() => {
-        console.log(`Dados aleatórios inseridos com sucesso.`);
+        console.log(`Dados aleatórios de usuários inseridos com sucesso.`);
         db.close();
       });
     }
@@ -49,4 +93,4 @@ const insertRandomData = (numRecords) => {
 };
 
 // Inserir 10 registros aleatórios
-insertRandomData(10);
+insertRandomUsers(10);
