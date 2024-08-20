@@ -1,3 +1,5 @@
+import { ChartOverview } from "@/components/chart";
+import Sales from "@/components/sales";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BadgeDollarSign, DollarSign, Percent, Users } from "lucide-react";
 
@@ -71,7 +73,10 @@ export default function Home() {
       </Card>
 
     </section>
-    
+    <section className="mt-4 flex fle-col md:flex-row gap-4">
+      <ChartOverview/>
+      <Sales/>
+    </section>
     </main>
   );
 }
