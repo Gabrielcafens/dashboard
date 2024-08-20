@@ -1,8 +1,6 @@
-# PainelXS - Frontend
-
 ## Descrição
 
-O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript, Tailwind CSS e Shadcn UI. Este projeto exibe um painel de controle interativo, com gráficos e estatísticas.
+O **PainelXS** é uma aplicação frontend moderna que fornece um painel de controle interativo para visualizar gráficos e estatísticas. Desenvolvido com Next.js, TypeScript, Tailwind CSS e Shadcn UI, o PainelXS é ideal para análise de dados e monitoramento de métricas importantes em tempo real.
 
 ## Tecnologias Utilizadas
 
@@ -28,9 +26,8 @@ O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript,
 
   ```bash
    git clone https://github.com/seu-usuario/painelxs.git
-```
    cd painelxs
-
+  ```
 
 2. Instale as dependências:
 
@@ -45,8 +42,6 @@ O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript,
   ```
 
 4. Acesse a aplicação no navegador em [http://localhost:3000](http://localhost:3000).
-
-
 
 # PainelXS Backend
 
@@ -101,11 +96,41 @@ O **PainelXS Backend** é um serviço de backend desenvolvido com Node.js e Expr
 
 ## Endpoints
 
-- **GET** \`/dashboard\` - Retorna todos os registros.
-- **GET** \`/dashboard/:id\` - Retorna um registro específico.
-- **POST** \`/dashboard\` - Cria um novo registro.
-- **PUT** \`/dashboard/:id\` - Atualiza um registro existente.
-- **DELETE** \`/dashboard/:id\` - Exclui um registro.
+- **GET** \`/dashboard\` - Retorna todos os registros do dashboard.
+- **GET** \`/dashboard/:id\` - Retorna um registro específico do dashboard.
+- **POST** \`/dashboard\` - Cria um novo registro no dashboard.
+- **PUT** \`/dashboard/:id\` - Atualiza um registro existente no dashboard.
+- **DELETE** \`/dashboard/:id\` - Exclui um registro do dashboard.
+
+- **GET** \`/usuarios\` - Retorna todos os usuários.
+- **GET** \`/usuarios/:id\` - Retorna um usuário específico.
+- **POST** \`/usuarios\` - Cria um novo usuário.
+- **PUT** \`/usuarios/:id\` - Atualiza um usuário existente.
+- **DELETE** \`/usuarios/:id\` - Exclui um usuário.
+
+## Configuração do Ambiente
+
+Para o backend, você precisa definir as seguintes variáveis de ambiente:
+
+- \`PORT\`: Porta onde o servidor Express será executado (opcional, padrão é \`3001\`).
+- \`DATABASE_URL\`: URL do banco de dados SQLite (se não estiver usando o padrão \`./data.db\`).
+
+Crie um arquivo \`.env\` na raiz do projeto backend e adicione:
+
+```
+PORT=3001
+DATABASE_URL=./data.db
+```
+
+## Desenvolvimento e Testes
+
+### Executar Testes
+
+Para garantir que tudo está funcionando corretamente, você pode executar os testes automatizados. Adicione scripts de teste ao seu \`package.json\` e forneça instruções para executá-los.
+
+```
+npm test
+```
 
 ## Contribuição
 
@@ -115,5 +140,8 @@ O **PainelXS Backend** é um serviço de backend desenvolvido com Node.js e Expr
 
 ## Licença
 
-Este projeto está licenciado sob a [MIT License](LICENSE).
+Este projeto está licenciado sob a [MIT License](LICENSE). Veja o arquivo LICENSE para mais detalhes.
+EOF
 
+# Mensagem de conclusão
+echo "README.md criado com sucesso."
