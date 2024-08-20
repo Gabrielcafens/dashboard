@@ -30,7 +30,7 @@ O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript,
    git clone https://github.com/seu-usuario/painelxs.git
 ```
    cd painelxs
-  ```
+
 
 2. Instale as dependências:
 
