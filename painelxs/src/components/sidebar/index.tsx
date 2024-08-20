@@ -5,7 +5,7 @@ import { Home, HomeIcon, LogOut, Package, PanelBottom, Settings2, ShoppingBag, U
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
 export function Sidebar() {
   return(
-    <div className="sm:hidden flex w-full flex-col bg-muted/40">
+    <div className="flex w-full flex-col bg-muted/40">
 
       <aside 
       className="fixed inset-y-0 left-0 z-10 hidden w-14 border-r bg-background sm:flex flex-col"
