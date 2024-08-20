@@ -46,19 +46,8 @@ O **PainelXS** é uma aplicação frontend desenvolvida com Next.js, TypeScript,
 
 4. Acesse a aplicação no navegador em [http://localhost:3000](http://localhost:3000).
 
-## Contribuição
 
-1. Faça um fork do projeto.
-2. Crie uma branch para sua feature ou correção.
-3. Envie um pull request.
 
-## Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-EOL
-
-# Criar README para o Backend (painelxs-backend)
-cat <<EOL > painelxs-backend/README.md
 # PainelXS Backend
 
 ## Descrição
