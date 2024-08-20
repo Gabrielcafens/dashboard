@@ -1,3 +1,5 @@
+# PainelXS - Frontend
+
 ## Descrição
 
 O **PainelXS** é uma aplicação frontend moderna que fornece um painel de controle interativo para visualizar gráficos e estatísticas. Desenvolvido com Next.js, TypeScript, Tailwind CSS e Shadcn UI, o PainelXS é ideal para análise de dados e monitoramento de métricas importantes em tempo real.
@@ -40,8 +42,18 @@ O **PainelXS** é uma aplicação frontend moderna que fornece um painel de cont
   ```bash
    npm run dev
   ```
+4.Crie um arquivo \`.env\` na raiz do projeto frontend e adicione:
 
-4. Acesse a aplicação no navegador em [http://localhost:3000](http://localhost:3000).
+```
+# URL base para a API
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+
+
+# Outras variáveis de ambiente, se necessário
+NEXT_PUBLIC_SOME_OTHER_ENV_VARIABLE=value
+
+```
+5. Acesse a aplicação no navegador em [http://localhost:3000](http://localhost:3000).
 
 # PainelXS Backend
 
@@ -79,20 +91,27 @@ O **PainelXS Backend** é um serviço de backend desenvolvido com Node.js e Expr
    npm install
   ```
 
-3. Crie o banco de dados e popula com dados iniciais:
+3. **Primeiros Comandos**: Se você está configurando o projeto pela primeira vez e as tabelas ainda não foram criadas, você precisa inicializar o banco de dados e criar as tabelas necessárias. Execute:
 
   ```bash
    node init-db.js
+  ```
+
+   Este comando criará as tabelas necessárias no banco de dados. Após a execução, você pode popular o banco com dados iniciais.
+
+4. Popule o banco de dados com dados iniciais:
+
+  ```bash
    node populate-db.js
   ```
 
-4. Inicie o servidor:
+5. Inicie o servidor:
 
   ```bash
    node server.js
   ```
 
-5. A API estará disponível em [http://localhost:3001](http://localhost:3001).
+6. A API estará disponível em [http://localhost:3001](http://localhost:3001).
 
 ## Endpoints
 
@@ -118,9 +137,37 @@ Para o backend, você precisa definir as seguintes variáveis de ambiente:
 Crie um arquivo \`.env\` na raiz do projeto backend e adicione:
 
 ```
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_API_KEY=your_api_key_here
+NEXT_PUBLIC_AUTH_TOKEN=your_auth_token_here
+NEXT_PUBLIC_ENVIRONMENT=development
+NEXT_PUBLIC_API_TIMEOUT=5000
 PORT=3001
 DATABASE_URL=./data.db
 ```
+# Uso do Postman
+
+# 1. Importar Coleção
+# Importe a coleção de endpoints para o Postman. Você pode criar uma nova coleção manualmente ou usar um arquivo JSON de coleção existente.
+
+# 2. Configurar Ambiente
+# Crie um ambiente no Postman para definir variáveis como a URL base da API. Adicione uma variável `baseUrl` com o valor `http://localhost:3001`.
+
+# 3. Testar Endpoints
+# - **GET** `/dashboard`: Teste obtendo todos os registros do dashboard.
+# - **GET** `/dashboard/:id`: Teste obtendo um registro específico.
+# - **POST** `/dashboard`: Teste criando um novo registro. No corpo da requisição, inclua os dados do novo registro.
+# - **PUT** `/dashboard/:id`: Teste atualizando um registro existente. No corpo da requisição, inclua os dados atualizados.
+# - **DELETE** `/dashboard/:id`: Teste excluindo um registro.
+
+# - **GET** `/usuarios`: Teste obtendo todos os usuários.
+# - **GET** `/usuarios/:id`: Teste obtendo um usuário específico.
+# - **POST** `/usuarios`: Teste criando um novo usuário. No corpo da requisição, inclua os dados do novo usuário.
+# - **PUT** `/usuarios/:id`: Teste atualizando um usuário existente. No corpo da requisição, inclua os dados atualizados.
+# - **DELETE** `/usuarios/:id`: Teste excluindo um usuário.
+
+# 4. Verificar Respostas
+# Verifique as respostas da API no Postman para garantir que os dados estão sendo retornados e manipulados corretamente. Confirme que os códigos de status e os corpos das respostas estão de acordo com o esperado.
 
 ## Desenvolvimento e Testes
 
@@ -128,7 +175,7 @@ DATABASE_URL=./data.db
 
 Para garantir que tudo está funcionando corretamente, você pode executar os testes automatizados. Adicione scripts de teste ao seu \`package.json\` e forneça instruções para executá-los.
 
-```
+```bash
 npm test
 ```
 
@@ -141,7 +188,4 @@ npm test
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE). Veja o arquivo LICENSE para mais detalhes.
-EOF
 
-# Mensagem de conclusão
-echo "README.md criado com sucesso."
