@@ -60,14 +60,14 @@ export function Sidebar() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="/clientes"
+                  href="/userlist"
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Users className="h-5 w-5" />
-                  <span className="sr-only">Clientes</span>
+                  <span className="sr-only">Usuarios</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">Clientes</TooltipContent>
+              <TooltipContent side="right">Usuarios</TooltipContent>
             </Tooltip>
 
             <Tooltip>

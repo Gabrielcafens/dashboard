@@ -1,7 +1,7 @@
 // src/app/dashboard/page.tsx
 'use client'
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Verifique o caminho e a disponibilidade desses componentes
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 interface DashboardData {
   id: number;
