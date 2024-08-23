@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+require('dotenv').config(); // Carregar variáveis de ambiente
 
 // Criar a instância do aplicativo Express
 const app = express();
 
 // Configurar o middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // URL do frontend
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -21,7 +24,7 @@ app.use('/produtos', produtosRoutes);
 app.use('/usuarios', usuariosRoutes);
 
 // Iniciar o servidor
-const port = 3001;
+const port = process.env.PORT || 3001; // Usar variável de ambiente para a porta
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });

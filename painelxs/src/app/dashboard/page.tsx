@@ -30,7 +30,8 @@ export default function DashboardPage() {
         setData(result);
       } catch (err) {
         console.error('Erro ao buscar dados:', err); // Adicionado para depuração
-        setError(err.message);
+
+    setError((err as Error).message);
       } finally {
         setLoading(false);
       }

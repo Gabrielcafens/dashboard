@@ -7,7 +7,6 @@ exports.createUser = (req, res) => {
   const { nome, email, senha } = req.body;
   const dataCriacao = new Date().toISOString();
 
-  // Hash da senha
   bcrypt.hash(senha, 10, (err, hash) => {
     if (err) {
       return res.status(500).json({ message: err.message });
@@ -133,7 +132,6 @@ exports.loginUser = (req, res) => {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
-    // Comparar a senha
     bcrypt.compare(senha, user.senha, (err, result) => {
       if (err) {
         return res.status(500).json({ message: err.message });
@@ -143,7 +141,7 @@ exports.loginUser = (req, res) => {
       }
 
       // Gerar token JWT
-      const token = jwt.sign({ id: user.id, email: user.email }, 'secreta-chave', { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secreta-chave', { expiresIn: '1h' });
 
       res.json({ message: 'Login bem-sucedido', token });
     });
