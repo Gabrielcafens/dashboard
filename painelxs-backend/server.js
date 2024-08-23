@@ -179,6 +179,88 @@ app.delete('/usuarios/:id', (req, res) => {
   stmt.finalize();
 });
 
+// Rotas para Produtos
+
+// Create - Adicionar um novo produto
+app.post('/produtos', (req, res) => {
+  const { nome, descricao, preco, quantidadeEstoque } = req.body;
+  const dataCriacao = new Date().toISOString();
+
+  const stmt = db.prepare(`
+    INSERT INTO produtos (nome, descricao, preco, quantidadeEstoque, dataCriacao)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  stmt.run(nome, descricao, preco, quantidadeEstoque, dataCriacao, (err) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.status(201).json({ message: 'Produto criado com sucesso.' });
+    }
+  });
+  stmt.finalize();
+});
+
+// Read - Obter todos os produtos
+app.get('/produtos', (req, res) => {
+  db.all('SELECT * FROM produtos', [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.status(200).json(rows);
+    }
+  });
+});
+
+// Read - Obter um produto por ID
+app.get('/produtos/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.get('SELECT * FROM produtos WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else if (row) {
+      res.status(200).json(row);
+    } else {
+      res.status(404).json({ message: 'Produto não encontrado.' });
+    }
+  });
+});
+
+// Update - Atualizar um produto por ID
+app.put('/produtos/:id', (req, res) => {
+  const { id } = req.params;
+  const { nome, descricao, preco, quantidadeEstoque } = req.body;
+
+  const stmt = db.prepare(`
+    UPDATE produtos
+    SET nome = ?, descricao = ?, preco = ?, quantidadeEstoque = ?
+    WHERE id = ?
+  `);
+  stmt.run(nome, descricao, preco, quantidadeEstoque, id, (err) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.status(200).json({ message: 'Produto atualizado com sucesso.' });
+    }
+  });
+  stmt.finalize();
+});
+
+// Delete - Deletar um produto por ID
+app.delete('/produtos/:id', (req, res) => {
+  const { id } = req.params;
+
+  const stmt = db.prepare('DELETE FROM produtos WHERE id = ?');
+  stmt.run(id, (err) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.status(200).json({ message: 'Produto deletado com sucesso.' });
+    }
+  });
+  stmt.finalize();
+});
+
 // Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

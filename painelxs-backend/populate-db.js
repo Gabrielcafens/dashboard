@@ -11,79 +11,59 @@ const getRandomDate = () => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
 };
 
-// Função para gerar um nome aleatório
-const getRandomName = () => {
-  const names = ['João', 'Maria', 'Pedro', 'Ana', 'Carlos', 'Fernanda', 'José', 'Juliana'];
-  return names[Math.floor(Math.random() * names.length)];
+// Função para gerar um nome aleatório de produto
+const getRandomProductName = () => {
+  const products = ['Camiseta', 'Calça', 'Tênis', 'Jaqueta', 'Boné', 'Bolsa', 'Óculos', 'Relógio'];
+  return products[Math.floor(Math.random() * products.length)];
 };
 
-// Função para gerar um email aleatório
-const getRandomEmail = () => {
-  const domains = ['example.com', 'test.com', 'demo.com'];
-  const name = getRandomName().toLowerCase();
-  const domain = domains[Math.floor(Math.random() * domains.length)];
-  return `${name}_${getRandomInt(1000, 9999)}@${domain}`; // Adiciona um número aleatório ao email
+// Função para gerar uma descrição aleatória
+const getRandomDescription = () => {
+  const descriptions = [
+    'Produto de alta qualidade.',
+    'Ótimo para o dia a dia.',
+    'Desenvolvido com materiais premium.',
+    'Confortável e elegante.',
+    'A escolha perfeita para você.',
+  ];
+  return descriptions[Math.floor(Math.random() * descriptions.length)];
 };
 
-// Função para gerar uma senha aleatória
-const getRandomPassword = () => {
-  return Math.random().toString(36).slice(-8); // Senha de 8 caracteres aleatórios
-};
+// Função para gerar um preço aleatório
+const getRandomPrice = () => (Math.random() * (500 - 10) + 10).toFixed(2); // Preço entre 10 e 500
 
-// Função para verificar se o email já existe
-const emailExists = (email, callback) => {
-  db.get('SELECT 1 FROM usuarios WHERE email = ?', [email], (err, row) => {
-    if (err) {
-      console.error('Erro ao verificar email:', err.message);
-      callback(err);
-    } else {
-      callback(null, !!row);
-    }
-  });
-};
+// Função para gerar uma quantidade em estoque aleatória
+const getRandomStockQuantity = () => getRandomInt(0, 100); // Quantidade entre 0 e 100
 
 // Inserir dados aleatórios
-const insertRandomUsers = (numRecords) => {
+const insertRandomProducts = (numRecords) => {
   const stmt = db.prepare(`
-    INSERT INTO usuarios (nome, email, senha, dataCriacao)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO produtos (nome, descricao, preco, quantidadeEstoque, dataCriacao)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   let count = 0;
 
   const insertNext = () => {
     if (count < numRecords) {
-      const nome = getRandomName();
-      let email = getRandomEmail();
+      const nome = getRandomProductName();
+      const descricao = getRandomDescription();
+      const preco = getRandomPrice();
+      const quantidadeEstoque = getRandomStockQuantity();
+      const dataCriacao = getRandomDate();
 
-      emailExists(email, (err, exists) => {
+      stmt.run(nome, descricao, preco, quantidadeEstoque, dataCriacao, (err) => {
         if (err) {
-          console.error('Erro ao verificar email:', err.message);
-          return;
-        }
-
-        if (exists) {
-          // Se o email já existe, gera um novo
-          email = getRandomEmail();
-          insertNext(); // Tenta inserir novamente
+          console.error('Erro ao inserir dados:', err.message);
         } else {
-          const senha = getRandomPassword();
-          const dataCriacao = getRandomDate();
-
-          stmt.run(nome, email, senha, dataCriacao, (err) => {
-            if (err) {
-              console.error('Erro ao inserir dados:', err.message);
-            } else {
-              console.log(`Usuário ${count + 1} inserido.`);
-              count++;
-              insertNext();
-            }
-          });
+          console.log(`Produto ${count + 1} inserido.`);
+          count++;
+          insertNext();
         }
       });
     } else {
       stmt.finalize(() => {
-        console.log(`Dados aleatórios de usuários inseridos com sucesso.`);
+        console.log(`Dados aleatórios de produtos inseridos com sucesso.`);
         db.close();
       });
     }
@@ -93,4 +73,4 @@ const insertRandomUsers = (numRecords) => {
 };
 
 // Inserir 10 registros aleatórios
-insertRandomUsers(10);
+insertRandomProducts(10);

@@ -6,12 +6,13 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      senha TEXT NOT NULL,
-      dataCadastro TEXT DEFAULT CURRENT_TIMESTAMP
+      nome TEXT,
+      email TEXT UNIQUE,
+      senha TEXT,
+      dataCriacao TEXT
     )
   `);
 });
+
 
 module.exports = db;
