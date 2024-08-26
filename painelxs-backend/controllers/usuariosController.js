@@ -1,36 +1,45 @@
 const db = require('../models/Usuarios'); // Atualize o caminho conforme necessário
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Para autenticação de token
+const sendResetEmail = require('../config/email');
 const nodemailer = require('nodemailer');
+
+
 // Criar um novo usuário
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // Ou outro serviço de e-mail
-  auth: {
-    user: process.env.EMAIL_USER, // Seu e-mail
-    pass: process.env.EMAIL_PASS  // Sua senha de e-mail ou senha do app
-  }
-});
 exports.createUser = (req, res) => {
   const { nome, email, senha } = req.body;
   const dataCriacao = new Date().toISOString();
 
-  bcrypt.hash(senha, 10, (err, hash) => {
+  // Verificar se o e-mail já está em uso
+  db.get('SELECT * FROM usuarios WHERE email = ?', [email], (err, user) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
+    if (user) {
+      return res.status(400).json({ message: 'E-mail já está em uso' });
+    }
 
-    db.run(
-      `INSERT INTO usuarios (nome, email, senha, dataCriacao) VALUES (?, ?, ?, ?)`,
-      [nome, email, hash, dataCriacao],
-      function (err) {
-        if (err) {
-          return res.status(400).json({ message: err.message });
-        }
-        res.status(201).json({ id: this.lastID, nome, email, dataCriacao });
+    // Hash da senha
+    bcrypt.hash(senha, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).json({ message: err.message });
       }
-    );
+
+      // Inserir o novo usuário no banco de dados com a senha em hash
+      db.run(
+        `INSERT INTO usuarios (nome, email, senha, dataCriacao) VALUES (?, ?, ?, ?)`,
+        [nome, email, hash, dataCriacao],
+        function (err) {
+          if (err) {
+            return res.status(400).json({ message: err.message });
+          }
+          res.status(201).json({ id: this.lastID, nome, email, dataCriacao });
+        }
+      );
+    });
   });
 };
+
 
 // Ler todos os usuários
 exports.getAllUsers = (req, res) => {
@@ -161,57 +170,54 @@ exports.loginUser = (req, res) => {
 exports.resetPassword = (req, res) => {
   const { token, novaSenha } = req.body;
 
-  // Verificar se o token é válido
-  db.get('SELECT * FROM usuarios WHERE resetToken = ? AND resetTokenExpires > ?', [token, Date.now()], (err, user) => {
+  db.get('SELECT * FROM usuarios WHERE resetToken = ? AND resetTokenExpires > ?', [token, Date.now()], async (err, user) => {
     if (err || !user) {
       return res.status(400).json({ message: 'Token inválido ou expirado' });
     }
 
     // Hash da nova senha
-    bcrypt.hash(novaSenha, 10, (err, hash) => {
+    const hash = await bcrypt.hash(novaSenha, 10);
+
+    db.run('UPDATE usuarios SET senha = ?, resetToken = NULL, resetTokenExpires = NULL WHERE email = ?', [hash, user.email], (err) => {
       if (err) {
-        return res.status(500).json({ message: 'Erro ao hashear a senha' });
+        return res.status(500).json({ message: 'Erro ao atualizar a senha' });
       }
-
-      // Atualizar a senha e limpar o token
-      db.run('UPDATE usuarios SET senha = ?, resetToken = NULL, resetTokenExpires = NULL WHERE email = ?', [hash, user.email], (err) => {
-        if (err) {
-          return res.status(500).json({ message: 'Erro ao atualizar a senha' });
-        }
-
-        res.json({ message: 'Senha redefinida com sucesso' });
-      });
+      res.json({ message: 'Senha redefinida com sucesso' });
     });
   });
 };
 
-
 exports.forgotPassword = (req, res) => {
   const { email } = req.body;
+
   db.get('SELECT * FROM usuarios WHERE email = ?', [email], (err, user) => {
-    if (err || !user) {
-      return res.status(400).json({ message: 'Usuário não encontrado' });
+    if (err) {
+      return res.status(500).json({ message: 'Erro ao buscar usuário' });
+    }
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = bcrypt.hashSync(email + Date.now(), 10); // Gerar um token de reset
     const resetTokenExpires = Date.now() + 3600000; // 1 hora
 
     // Salvar o token e sua expiração no banco de dados
-    db.run('UPDATE usuarios SET resetToken = ?, resetTokenExpires = ? WHERE email = ?', [resetToken, resetTokenExpires, email]);
-
-    const resetUrl = `http://localhost:3001/reset-password/${resetToken}`;
-
-    // Enviar o e-mail
-    transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Redefinição de Senha',
-      text: `Você solicitou a redefinição da sua senha. Use o seguinte link para redefinir sua senha: ${resetUrl}. O link é válido por 1 hora.`
-    }, (error, info) => {
-      if (error) {
-        return res.status(500).json({ message: 'Erro ao enviar o e-mail' });
+    db.run('UPDATE usuarios SET resetToken = ?, resetTokenExpires = ? WHERE email = ?', [resetToken, resetTokenExpires, email], (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro ao atualizar o token de redefinição' });
       }
-      res.json({ message: 'Email de redefinição de senha enviado' });
+
+      const resetUrl = `http://localhost:3001/reset-password/${resetToken}`; // Frontend URL
+
+      // Enviar e-mail para o usuário com o link de redefinição
+      sendResetEmail(email, resetUrl)
+        .then(() => {
+          res.json({ message: 'E-mail de redefinição de senha enviado' });
+        })
+        .catch((error) => {
+          console.error('Erro ao enviar o e-mail:', error);
+          res.status(500).json({ message: 'Erro ao enviar o e-mail' });
+        });
     });
   });
 };
