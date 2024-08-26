@@ -3,7 +3,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Para autenticação de token
 const sendResetEmail = require('../config/email');
 const nodemailer = require('nodemailer');
-
+const generateRandomPassword = (length = 8) => {
+  return crypto.randomBytes(length).toString('hex').slice(0, length);
+};
 
 // Criar um novo usuário
 exports.createUser = (req, res) => {
@@ -191,14 +193,11 @@ exports.forgotPassword = (req, res) => {
   const { email } = req.body;
 
   db.get('SELECT * FROM usuarios WHERE email = ?', [email], (err, user) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro ao buscar usuário' });
-    }
-    if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado' });
+    if (err || !user) {
+      return res.status(400).json({ message: 'Usuário não encontrado' });
     }
 
-    const resetToken = bcrypt.hashSync(email + Date.now(), 10); // Gerar um token de reset
+    const resetToken = bcrypt.hashSync(email + Date.now(), 10); // Gerar um token de reset baseado no email e timestamp
     const resetTokenExpires = Date.now() + 3600000; // 1 hora
 
     // Salvar o token e sua expiração no banco de dados
