@@ -1,4 +1,3 @@
-// src/app/login/page.tsx
 import { ProfileForm } from '@/components/profileForm'; // Certifique-se de que o caminho está correto
 
 const LoginPage = () => {

@@ -1,0 +1,268 @@
+[
+  {
+      "id": 1,
+      "nome": "João Silva",
+      "email": "joao.silva@example.com",
+      "senha": "senha123",
+      "dataCriacao": "2024-08-20T21:34:33.694Z"
+  },
+  {
+      "id": 2,
+      "nome": "Fernanda",
+      "email": "ana@test.com",
+      "senha": "mktz36je",
+      "dataCriacao": "2023-03-05"
+  },
+  {
+      "id": 3,
+      "nome": "Fernanda",
+      "email": "pedro@test.com",
+      "senha": "wjeyhvv8",
+      "dataCriacao": "2024-08-03"
+  },
+  {
+      "id": 4,
+      "nome": "Ana",
+      "email": "maria@example.com",
+      "senha": "e22r48wn",
+      "dataCriacao": "2023-10-21"
+  },
+  {
+      "id": 5,
+      "nome": "João",
+      "email": "ana@demo.com",
+      "senha": "znpymzyk",
+      "dataCriacao": "2024-06-13"
+  },
+  {
+      "id": 6,
+      "nome": "Ana",
+      "email": "pedro@demo.com",
+      "senha": "1hmhrduh",
+      "dataCriacao": "2023-10-26"
+  },
+  {
+      "id": 7,
+      "nome": "Juliana",
+      "email": "joão_6729@test.com",
+      "senha": "87kucyok",
+      "dataCriacao": "2023-07-22"
+  },
+  {
+      "id": 8,
+      "nome": "Carlos",
+      "email": "pedro_2080@example.com",
+      "senha": "ry6m6ofh",
+      "dataCriacao": "2023-01-30"
+  },
+  {
+      "id": 9,
+      "nome": "Maria",
+      "email": "ana_9008@example.com",
+      "senha": "x4lh2mab",
+      "dataCriacao": "2023-01-07"
+  },
+  {
+      "id": 10,
+      "nome": "Carlos",
+      "email": "maria_1493@example.com",
+      "senha": "t3opmv05",
+      "dataCriacao": "2024-02-19"
+  },
+  {
+      "id": 11,
+      "nome": "Ana",
+      "email": "josé_5487@demo.com",
+      "senha": "9x0hmfmp",
+      "dataCriacao": "2023-06-27"
+  },
+  {
+      "id": 12,
+      "nome": "Carlos",
+      "email": "josé_5681@test.com",
+      "senha": "lhywca3q",
+      "dataCriacao": "2023-03-01"
+  },
+  {
+      "id": 13,
+      "nome": "Ana",
+      "email": "joão_3630@example.com",
+      "senha": "efnkwufl",
+      "dataCriacao": "2023-10-28"
+  },
+  {
+      "id": 14,
+      "nome": "Juliana",
+      "email": "juliana_9821@demo.com",
+      "senha": "ch0aetjq",
+      "dataCriacao": "2023-11-25"
+  },
+  {
+      "id": 15,
+      "nome": "José",
+      "email": "pedro_9343@demo.com",
+      "senha": "c8c51tov",
+      "dataCriacao": "2024-06-13"
+  },
+  {
+      "id": 16,
+      "nome": "Juliana",
+      "email": "carlos_4493@demo.com",
+      "senha": "p44ydvwl",
+      "dataCriacao": "2024-05-02"
+  },
+  {
+      "id": 17,
+      "nome": "Carlos",
+      "email": "ana_5238@demo.com",
+      "senha": "5my7xj9q",
+      "dataCriacao": "2024-04-01"
+  },
+  {
+      "id": 18,
+      "nome": "Juliana",
+      "email": "ana_2276@example.com",
+      "senha": "y3us70hc",
+      "dataCriacao": "2024-03-22"
+  },
+  {
+      "id": 19,
+      "nome": "Ana",
+      "email": "josé_7702@demo.com",
+      "senha": "wk8agdnj",
+      "dataCriacao": "2024-07-29"
+  },
+  {
+      "id": 20,
+      "nome": "Juliana",
+      "email": "juliana_3695@test.com",
+      "senha": "6wohkoyb",
+      "dataCriacao": "2023-08-14"
+  },
+  {
+      "id": 21,
+      "nome": "João",
+      "email": "josé_3490@demo.com",
+      "senha": "sc7h18kr",
+      "dataCriacao": "2023-03-11"
+  },
+  {
+      "id": 22,
+      "nome": "Pedro",
+      "email": "maria_5548@test.com",
+      "senha": "liwzuhta",
+      "dataCriacao": "2023-08-24"
+  },
+  {
+      "id": 23,
+      "nome": "Pedro",
+      "email": "maria_7877@test.com",
+      "senha": "nw5xuuy6",
+      "dataCriacao": "2024-06-25"
+  },
+  {
+      "id": 24,
+      "nome": "Carlos",
+      "email": "juliana_8761@example.com",
+      "senha": "pxma34eo",
+      "dataCriacao": "2023-11-24"
+  },
+  {
+      "id": 25,
+      "nome": "Ana",
+      "email": "pedro_1019@test.com",
+      "senha": "n5sfx5jh",
+      "dataCriacao": "2023-07-02"
+  },
+  {
+      "id": 26,
+      "nome": "Maria",
+      "email": "fernanda_7033@example.com",
+      "senha": "8i3nl7sv",
+      "dataCriacao": "2023-01-02"
+  },
+  {
+      "id": 27,
+      "nome": "Carlos",
+      "email": "fernanda_8102@demo.com",
+      "senha": "1nvyozfe",
+      "dataCriacao": "2023-02-28"
+  },
+  {
+      "id": 28,
+      "nome": "Maria",
+      "email": "maria_3879@test.com",
+      "senha": "1t41ac3f",
+      "dataCriacao": "2024-07-11"
+  },
+  {
+      "id": 29,
+      "nome": "Ana",
+      "email": "maria_3353@demo.com",
+      "senha": "q1yjnlo7",
+      "dataCriacao": "2023-10-02"
+  },
+  {
+      "id": 30,
+      "nome": "João",
+      "email": "josé_1758@test.com",
+      "senha": "bj0w8n3o",
+      "dataCriacao": "2023-11-20"
+  },
+  {
+      "id": 31,
+      "nome": "Carlos",
+      "email": "ana_8631@test.com",
+      "senha": "b48tu545",
+      "dataCriacao": "2024-05-06"
+  },
+  {
+      "id": 32,
+      "nome": "Fernanda",
+      "email": "ana_7113@example.com",
+      "senha": "ht7xkbjk",
+      "dataCriacao": "2024-04-03"
+  },
+  {
+      "id": 33,
+      "nome": "Carlos",
+      "email": "josé_2481@test.com",
+      "senha": "u41409xg",
+      "dataCriacao": "2023-09-17"
+  },
+  {
+      "id": 34,
+      "nome": "Maria",
+      "email": "joão_2946@test.com",
+      "senha": "d4blfidf",
+      "dataCriacao": "2024-04-29"
+  },
+  {
+      "id": 35,
+      "nome": "Maria",
+      "email": "josé_9317@test.com",
+      "senha": "7zjuqcic",
+      "dataCriacao": "2023-08-19"
+  },
+  {
+      "id": 36,
+      "nome": "Maria",
+      "email": "ana_9759@demo.com",
+      "senha": "y3r5y8xf",
+      "dataCriacao": "2024-07-28"
+  },
+  {
+      "id": 37,
+      "nome": "Admin",
+      "email": "Admin@admin.com",
+      "senha": "Admin123",
+      "dataCriacao": null
+  },
+  {
+      "id": 38,
+      "nome": "Maria Souza",
+      "email": "maria.souza@example.com",
+      "senha": "$2b$10$hybRtMl.3grWgBx.0o0BwuinZP03MwPZoeOXHMMJIrMQ4tt/IVkBS",
+      "dataCriacao": "2024-08-26T14:38:47.723Z"
+  }
+]

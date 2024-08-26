@@ -121,10 +121,11 @@ exports.deleteUser = (req, res) => {
 };
 
 // Login de usuário
+
 exports.loginUser = (req, res) => {
   const { email, senha } = req.body;
 
-  db.get(`SELECT * FROM usuarios WHERE email = ?`, [email], (err, user) => {
+  db.get('SELECT * FROM usuarios WHERE email = ?', [email], (err, user) => {
     if (err) {
       return res.status(500).json({ message: err.message });
     }
@@ -140,10 +141,33 @@ exports.loginUser = (req, res) => {
         return res.status(401).json({ message: 'Senha incorreta' });
       }
 
-      // Gerar token JWT
       const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secreta-chave', { expiresIn: '1h' });
 
       res.json({ message: 'Login bem-sucedido', token });
+    });
+  });
+};
+
+exports.resetPassword = (req, res) => {
+  const { token, novaSenha } = req.body;
+
+  db.get('SELECT * FROM usuarios WHERE resetToken = ? AND resetTokenExpires > ?', [token, Date.now()], (err, user) => {
+    if (err || !user) {
+      return res.status(400).json({ message: 'Token inválido ou expirado' });
+    }
+
+    bcrypt.hash(novaSenha, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro ao hashear a senha' });
+      }
+
+      db.run('UPDATE usuarios SET senha = ?, resetToken = NULL, resetTokenExpires = NULL WHERE email = ?', [hash, user.email], (err) => {
+        if (err) {
+          return res.status(500).json({ message: 'Erro ao atualizar a senha' });
+        }
+
+        res.json({ message: 'Senha redefinida com sucesso' });
+      });
     });
   });
 };
