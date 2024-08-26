@@ -1,52 +1,38 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import api from '@/lib/axiosConfig';
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  senha: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  email: z.string().email({ message: "Endereço de email inválido." }),
+  senha: z.string().min(6, { message: "A senha deve ter pelo menos 6 caracteres." }),
+  confirmSenha: z.string().min(6, { message: "A confirmação de senha deve ter pelo menos 6 caracteres." }),
+}).refine(data => data.senha === data.confirmSenha, {
+  message: "As senhas não coincidem.",
+  path: ["confirmSenha"],
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-export function ProfileForm() {
+export function RegisterForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Configurando o formulário
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       senha: "",
+      confirmSenha: "",
     },
   });
 
-  // Função de submissão
   const onSubmit = async (data: FormData) => {
-    try {
-      const response = await api.post('/usuarios/login', data);
-
-      if (response.status !== 200) {
-        setErrorMessage(response.data.message || 'Algo deu errado');
-      } else {
-        console.log(response.data.token); 
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setErrorMessage('Ocorreu um erro inesperado');
-    }
+    // Implementar a lógica de criação de conta aqui
   };
 
   return (
@@ -70,17 +56,29 @@ export function ProfileForm() {
           name="senha"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Senha</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Your password" {...field} />
+                <Input type="password" placeholder="Sua senha" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        <FormField
+          control={form.control}
+          name="confirmSenha"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirme sua senha</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Confirme sua senha" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Criar Conta</Button>
       </form>
     </Form>
   );

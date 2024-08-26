@@ -1,18 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import api from '@/lib/axiosConfig';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { email, senha } = req.body;
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/usuarios/login`, {
-        email,
-        senha
-      });
-
+      const response = await api.post('/usuarios/login', { email, senha });
+      
       // Sucesso no login
       res.status(200).json(response.data);
     } catch (error) {
