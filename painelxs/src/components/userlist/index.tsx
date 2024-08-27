@@ -50,17 +50,18 @@ const UserList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.nome}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{new Date(user.dataCriacao).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">Ativo</Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        {data.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.nome}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{new Date(user.dataCriacao).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">Ativo</Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+
             </TableBody>
           </Table>
         )}

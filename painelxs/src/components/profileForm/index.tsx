@@ -46,12 +46,13 @@ export function ProfileForm() {
     try {
       const response = await api.post('/usuarios/login', data);
       console.log("Login response:", response.data);  // Log da resposta
-
+  
       if (response.status === 200) {
         console.log("Token:", response.data.token);
+        localStorage.setItem('authToken', response.data.token);  // Armazena o token no localStorage
         setSuccessMessage('Login bem-sucedido');
         setErrorMessage(null);  // Limpar mensagem de erro, se houver
-
+  
         // Redirecionar para o dashboard após alguns segundos
         setTimeout(() => {
           window.location.href = '/dashboard'; // Redirecionar para o dashboard
@@ -72,6 +73,7 @@ export function ProfileForm() {
       }
     }
   };
+  
 
   return (
     <div className="max-w-md mx-auto">
