@@ -8,10 +8,12 @@ const app = express();
 
 // Configurar o middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // URL do frontend
+  origin: 'http://localhost:3000', // Ajuste para a URL correta do frontend
 }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // Configurar as rotas
 const dashboardRoutes = require('./routes/dashboardRoutes');

@@ -1,69 +1,111 @@
 // src/app/dashboard/page.tsx
-'use client'
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+'use client';
 
+import { useEffect, useState } from 'react';
+import api from '@/lib/axiosConfig';
+import { ChartOverview } from "@/components/chart";
+import Sales from "@/components/sales";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { BadgeDollarSign, DollarSign, Percent, Users } from "lucide-react";
+
+// Define the type for the data returned by the API
 interface DashboardData {
-  id: number;
-  totalVendas: number;
-  novosClientes: number;
-  totalPedidosHoje: number;
-  totalPedidos30Dias: number;
-  data: string;
+  totalSales: number;
+  newCustomers: number;
+  ordersToday: number;
+  totalOrders: number;
 }
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function Dashboard() {
+  const [data, setData] = useState<DashboardData>({
+    totalSales: 0,
+    newCustomers: 0,
+    ordersToday: 0,
+    totalOrders: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/dashboard');
-        console.log('Status da resposta:', response.status); // Adicionado para depuração
-        if (!response.ok) {
-          throw new Error('Erro ao buscar os dados do dashboard');
-        }
-        const result = await response.json();
-        console.log('Dados recebidos:', result); // Adicionado para depuração
-        setData(result);
-      } catch (err) {
-        console.error('Erro ao buscar dados:', err); // Adicionado para depuração
-
-    setError((err as Error).message);
-      } finally {
-        setLoading(false);
+        // Make the API request
+        const response = await api.get<DashboardData>('/dashboard'); // Adjust the endpoint as needed
+        // Update the state with the response data
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, []);
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>Erro: {error}</p>;
-
   return (
-    <div className="flex flex-col p-4 pl-64"> {/* Ajuste o padding-left conforme a largura da sua barra lateral */}
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      {data.length > 0 ? (
-        data.map((item) => (
-          <Card key={item.id} className="mb-4">
-            <CardHeader>
-              <h2 className="text-xl font-semibold">ID: {item.id}</h2>
-            </CardHeader>
-            <CardContent>
-              <div><strong>Total de Vendas:</strong> {item.totalVendas}</div>
-              <div><strong>Novos Clientes:</strong> {item.novosClientes}</div>
-              <div><strong>Total de Pedidos Hoje:</strong> {item.totalPedidosHoje}</div>
-              <div><strong>Total de Pedidos nos Últimos 30 Dias:</strong> {item.totalPedidos30Dias}</div>
-              <div><strong>Data:</strong> {new Date(item.data).toLocaleDateString()}</div>
-            </CardContent>
-          </Card>
-        ))
-      ) : (
-        <p>Nenhum dado disponível.</p>
-      )}
-    </div>
+    <main className="sm:ml-14 p-4">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">Total de vendas</CardTitle>
+              <DollarSign className="ml-auto w-4 h-4" />
+            </div>
+            <CardDescription>
+              Total de vendas em 90 dias
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-base sm:text-lg font-bold">R$ {data.totalSales}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">Novos clientes</CardTitle>
+              <Users className="ml-auto w-4 h-4" />
+            </div>
+            <CardDescription>
+              Novos clientes em 30 dias
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-base sm:text-lg font-bold">{data.newCustomers}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">Pedidos hoje</CardTitle>
+              <Percent className="ml-auto w-4 h-4" />
+            </div>
+            <CardDescription>
+              Total de pedidos hoje
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-base sm:text-lg font-bold">{data.ordersToday}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-center">
+              <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">Total pedidos</CardTitle>
+              <BadgeDollarSign className="ml-auto w-4 h-4" />
+            </div>
+            <CardDescription>
+              Total de pedidos em 30 dias
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-base sm:text-lg font-bold">{data.totalOrders}</p>
+          </CardContent>
+        </Card>
+      </section>
+      <section className="mt-4 flex flex-col md:flex-row gap-4">
+        <ChartOverview />
+        <Sales />
+      </section>
+    </main>
   );
 }

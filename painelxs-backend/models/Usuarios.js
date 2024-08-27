@@ -9,10 +9,11 @@ db.serialize(() => {
       nome TEXT,
       email TEXT UNIQUE,
       senha TEXT,
-      dataCriacao TEXT
+      dataCriacao TEXT,
+      resetToken TEXT,
+      resetTokenExpires TEXT
     )
   `);
 });
-
 
 module.exports = db;

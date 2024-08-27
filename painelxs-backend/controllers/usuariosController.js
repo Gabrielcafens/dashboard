@@ -141,6 +141,7 @@ exports.deleteUser = (req, res) => {
 // Login de usuário
 
 
+// loginUser em usuariosController.js
 exports.loginUser = (req, res) => {
   const { email, senha } = req.body;
 
