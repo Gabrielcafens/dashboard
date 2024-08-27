@@ -1,12 +1,21 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProfileForm } from '@/components/profileForm';
 import { RegisterForm } from '@/components/registerForm';
 import { ForgotPasswordForm } from '@/components/forgotPasswordForm';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useSearchParams } from 'next/navigation';
 
 const LoginPage = () => {
-  const [selectedTab, setSelectedTab] = useState("login");
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab') || 'login';
+  const message = searchParams.get('message');
+
+  const [selectedTab, setSelectedTab] = useState(tab);
+
+  useEffect(() => {
+    setSelectedTab(tab);
+  }, [tab]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -19,6 +28,7 @@ const LoginPage = () => {
           </TabsList>
 
           <TabsContent value="login">
+            {message && <p className="text-green-500">{message}</p>}
             <ProfileForm />
           </TabsContent>
           <TabsContent value="register">

@@ -7,14 +7,13 @@ require('dotenv').config(); // Carregar variáveis de ambiente
 
 // Criar a instância do aplicativo Express
 const app = express();
+app.use(express.json()); // Usado para análise de JSON
+app.use(bodyParser.urlencoded({ extended: true })); // Análise de dados de formulários
 
 // Configurar o middleware
 app.use(cors({
   origin: 'http://localhost:3000', // Ajuste para a URL correta do frontend
 }));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configurar as rotas
 const dashboardRoutes = require('./routes/dashboardRoutes');

@@ -1,29 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const usuariosController = require('../controllers/usuariosController');
+const authenticateToken = require('../middleware/authenticateToken');
 
-// Rota para criar um novo usuário
-router.post('/create', usuariosController.createUser);
+// Rotas Usuários
+router.post('/', usuariosController.createUser); // Criar usuário
+router.get('/', authenticateToken, usuariosController.getAllUsers); // Listar todos os usuários
+router.get('/:id', authenticateToken, usuariosController.getUserById); // Obter usuário por ID
+router.put('/:id', authenticateToken, usuariosController.updateUser); // Atualizar usuário
+router.delete('/:id', authenticateToken, usuariosController.deleteUser); // Deletar usuário
 
-// Rota para login
+// Outras rotas de usuários
 router.post('/login', usuariosController.loginUser);
-
-// Rota para redefinir a senha
-router.post('/reset-password', usuariosController.resetPassword);
-
-// Rota para enviar e-mail de redefinição de senha
 router.post('/forgot-password', usuariosController.forgotPassword);
-
-// Rota para obter todos os usuários
-router.get('/', usuariosController.getAllUsers);
-
-// Rota para obter um usuário específico por ID
-router.get('/:id', usuariosController.getUserById);
-
-// Rota para atualizar um usuário por ID
-router.put('/:id', usuariosController.updateUser);
-
-// Rota para deletar um usuário por ID
-router.delete('/:id', usuariosController.deleteUser);
+router.post('/reset-password', usuariosController.resetPassword);
 
 module.exports = router;

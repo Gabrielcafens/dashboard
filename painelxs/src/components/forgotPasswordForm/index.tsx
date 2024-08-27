@@ -1,22 +1,27 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import api from '@/lib/axiosConfig';
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Endereço de email inválido." }),
+  email: z.string().email({ message: "Invalid email address." }),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export function ForgotPasswordForm() {
-  const [message, setMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -26,12 +31,19 @@ export function ForgotPasswordForm() {
   });
 
   const onSubmit = async (data: FormData) => {
+    console.log("Forgot password data submitted:", data);
     try {
-      await api.post('/usuarios/forgot-password', data);
-      setMessage('E-mail de redefinição de senha enviado com sucesso.');
+      const response = await api.post('/usuarios/forgot-password', data);
+      console.log("Forgot password response:", response.data);
+
+      if (response.status !== 200) {
+        setErrorMessage(response.data.message || 'Something went wrong');
+      } else {
+        console.log("Password reset email sent."); 
+      }
     } catch (error) {
-      console.error('Erro ao solicitar redefinição de senha:', error);
-      setMessage('Erro ao solicitar redefinição de senha.');
+      console.error('Forgot password error:', error);
+      setErrorMessage('Unexpected error occurred');
     }
   };
 
@@ -51,8 +63,8 @@ export function ForgotPasswordForm() {
             </FormItem>
           )}
         />
-        {message && <p className="text-red-500">{message}</p>}
-        <Button type="submit">Solicitar Redefinição de Senha</Button>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        <Button type="submit">Request Password Reset</Button>
       </form>
     </Form>
   );

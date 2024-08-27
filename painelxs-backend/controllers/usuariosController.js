@@ -44,7 +44,6 @@ exports.createUser = (req, res) => {
   });
 };
 
-
 // Ler todos os usuários
 exports.getAllUsers = (req, res) => {
   db.all(`SELECT * FROM usuarios`, [], (err, rows) => {
