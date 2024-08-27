@@ -12,7 +12,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import api from '@/lib/axiosConfig';
+import axios from 'axios';
+
+// Configuração do axios
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -23,6 +31,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export function ProfileForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -33,24 +42,39 @@ export function ProfileForm() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Login data submitted:", data);
+    console.log("Login data submitted:", data);  // Log dos dados
     try {
       const response = await api.post('/usuarios/login', data);
-      console.log("Login response:", response.data);
+      console.log("Login response:", response.data);  // Log da resposta
 
-      if (response.status !== 200) {
-        setErrorMessage(response.data.message || 'Something went wrong');
+      if (response.status === 200) {
+        console.log("Token:", response.data.token);
+        setSuccessMessage('Login bem-sucedido');
+        setErrorMessage(null);  // Limpar mensagem de erro, se houver
+
+        // Redirecionar para o dashboard após alguns segundos
+        setTimeout(() => {
+          window.location.href = '/dashboard'; // Redirecionar para o dashboard
+        }, 2000); // Tempo de espera em milissegundos (2 segundos)
       } else {
-        console.log("Token:", response.data.token); 
+        setErrorMessage(response.data.message || 'Something went wrong');
+        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
       }
     } catch (error) {
-      console.error('Login error:', error);
-      setErrorMessage('Unexpected error occurred');
+      if (axios.isAxiosError(error)) {
+        console.error('Login error:', error.response?.data || error.message);
+        setErrorMessage('Unexpected error occurred');
+        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
+      } else {
+        console.error('Login error:', error);
+        setErrorMessage('Unexpected error occurred');
+        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
+      }
     }
   };
 
   return (
-    <div className="max-w-md mx-auto"> 
+    <div className="max-w-md mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -79,8 +103,9 @@ export function ProfileForm() {
               </FormItem>
             )}
           />
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-          <Button type="submit" className="w-full">Submit</Button>
+          <Button type="submit" className="w-full">Login</Button>
         </form>
       </Form>
     </div>
