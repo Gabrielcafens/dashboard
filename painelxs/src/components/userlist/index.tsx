@@ -21,6 +21,7 @@ const UserList = () => {
     const fetchData = async () => {
       try {
         const response = await api.get('/usuarios');
+        console.log('Usuários recebidos:', response.data); // Adicione este log
         setData(response.data);
       } catch (error) {
         console.error('Erro ao buscar usuários:', error);

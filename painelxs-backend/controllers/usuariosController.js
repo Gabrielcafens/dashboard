@@ -2,6 +2,8 @@ const db = require('../models/Usuarios'); // Atualize o caminho conforme necess�
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Para autenticação de token
 const sendResetEmail = require('../config/email');
+const { saveToken, getToken } = require('../utils/tokenManager');
+
 const nodemailer = require('nodemailer');
 const generateRandomPassword = (length = 8) => {
   return crypto.randomBytes(length).toString('hex').slice(0, length);
@@ -138,8 +140,6 @@ exports.deleteUser = (req, res) => {
   });
 };
 
-// Login de usuário
-
 
 // loginUser em usuariosController.js
 exports.loginUser = (req, res) => {
@@ -163,10 +163,14 @@ exports.loginUser = (req, res) => {
 
       const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secreta-chave', { expiresIn: '1h' });
 
+      // Salvar o token
+      saveToken(token);
+
       res.json({ message: 'Login bem-sucedido', token });
     });
   });
 };
+
 
 
 // Atualizar o controller para redefinir a senha

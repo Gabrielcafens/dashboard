@@ -1,17 +1,19 @@
 const fs = require('fs');
-const path = './data/token.txt'; // Caminho para o arquivo token.txt
+const path = './token.json';
 
-// Função para salvar o token
-const saveToken = (token) => {
-  fs.writeFileSync(path, token);
-};
+function saveToken(token) {
+  fs.writeFileSync(path, JSON.stringify({ token }));
+  console.log(`Salvando token no caminho: ${path}`);
+}
 
-// Função para ler o token
-const getToken = () => {
+function getToken() {
   if (fs.existsSync(path)) {
-    return fs.readFileSync(path, 'utf8');
+    const data = fs.readFileSync(path);
+    const json = JSON.parse(data);
+    console.log(`Lendo token do caminho: ${path}`);
+    return json.token;
   }
   return null;
-};
+}
 
 module.exports = { saveToken, getToken };
