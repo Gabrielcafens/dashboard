@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import api from '@/lib/axiosConfig';
 
 const formSchema = z.object({
   email: z.string().email({ message: "Endereço de email inválido." }),
@@ -15,7 +16,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function ForgotPasswordForm() {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -25,7 +26,13 @@ export function ForgotPasswordForm() {
   });
 
   const onSubmit = async (data: FormData) => {
-    // Implementar a lógica de solicitação de redefinição de senha aqui
+    try {
+      await api.post('/usuarios/forgot-password', data);
+      setMessage('E-mail de redefinição de senha enviado com sucesso.');
+    } catch (error) {
+      console.error('Erro ao solicitar redefinição de senha:', error);
+      setMessage('Erro ao solicitar redefinição de senha.');
+    }
   };
 
   return (
@@ -44,7 +51,7 @@ export function ForgotPasswordForm() {
             </FormItem>
           )}
         />
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {message && <p className="text-red-500">{message}</p>}
         <Button type="submit">Solicitar Redefinição de Senha</Button>
       </form>
     </Form>
