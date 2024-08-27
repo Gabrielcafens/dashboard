@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import axios from 'axios';
-import { useRouter } from 'next/navigation'; // Importar useRouter
+import { useRouter } from 'next/navigation';
 
 // Configuração do axios
 const api = axios.create({
@@ -29,12 +29,10 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export function ForgotPasswordForm() {
+export function ForgotPasswordForm({ onTabChange }: { onTabChange: (tab: string) => void }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const router = useRouter(); // Usar o roteador para mudar de aba
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -44,38 +42,38 @@ export function ForgotPasswordForm() {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log("Forgot password data submitted:", data);  // Log dos dados
-    setIsSubmitting(true); // Desabilitar o botão
+    console.log("Forgot password data submitted:", data);
+    setIsSubmitting(true);
 
     try {
       const response = await api.post('/usuarios/forgot-password', data);
-      console.log("Forgot password response:", response.data);  // Log da resposta
+      console.log("Forgot password response:", response.data);
 
       if (response.status === 200) {
         console.log("Password reset email sent.");
         setSuccessMessage(`E-mail de redefinição de senha enviado para ${data.email}`);
-        setErrorMessage(null);  // Limpar mensagem de erro, se houver
+        setErrorMessage(null);
 
-        // Redirecionar para a aba de login após 5 segundos
+        // Redirecionar para a aba de login após 10 segundos
         setTimeout(() => {
-          router.push('/login'); // Redirecionar para a aba de login
-        }, 5000); // Tempo de espera em milissegundos (5 segundos)
+          onTabChange("login"); // Mudar para a aba de login
+        }, 8000); // Tempo de espera em milissegundos (10 segundos)
       } else {
         setErrorMessage(response.data.message || 'Something went wrong');
-        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
+        setSuccessMessage(null);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Forgot password error:', error.response?.data || error.message);
         setErrorMessage('Unexpected error occurred');
-        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
+        setSuccessMessage(null);
       } else {
         console.error('Forgot password error:', error);
         setErrorMessage('Unexpected error occurred');
-        setSuccessMessage(null);  // Limpar mensagem de sucesso, se houver
+        setSuccessMessage(null);
       }
     } finally {
-      setIsSubmitting(false); // Reabilitar o botão
+      setIsSubmitting(false);
     }
   };
 

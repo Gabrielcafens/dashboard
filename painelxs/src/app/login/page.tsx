@@ -35,8 +35,9 @@ const LoginPage = () => {
             <RegisterForm />
           </TabsContent>
           <TabsContent value="forgot-password">
-            <ForgotPasswordForm />
+            <ForgotPasswordForm onTabChange={setSelectedTab} />
           </TabsContent>
+
         </Tabs>
       </div>
     </div>
