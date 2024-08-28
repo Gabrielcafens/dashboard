@@ -54,3 +54,25 @@ const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
+// Exemplo com Express e um banco de dados fictício
+app.delete('/usuarios/:id', async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    console.log(`Tentando excluir o usuário com ID: ${userId}`);
+
+    // Suponha que você esteja usando um ORM ou diretamente o banco de dados
+    const result = await db.query('DELETE FROM usuarios WHERE id = ?', [userId]);
+
+    if (result.affectedRows > 0) {
+      console.log(`Usuário com ID ${userId} excluído com sucesso.`);
+      res.status(200).send('Usuário excluído com sucesso.');
+    } else {
+      console.log(`Nenhum usuário encontrado com ID ${userId}.`);
+      res.status(404).send('Usuário não encontrado.');
+    }
+  } catch (error) {
+    console.error(`Erro ao excluir o usuário com ID ${userId}:`, error);
+    res.status(500).send('Erro ao excluir o usuário.');
+  }
+});

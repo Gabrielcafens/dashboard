@@ -1,5 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./data.db'); // Use o arquivo de banco de dados SQLite
+const db = new sqlite3.Database('./data.db');
 
 // Cria a tabela de produtos se não existir
 db.serialize(() => {

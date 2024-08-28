@@ -1,4 +1,4 @@
-const db = require('../models/Produtos'); // Importar a conexão com o banco de dados
+const db = require('../models/Produtos'); // Importa a conexão com o banco de dados
 
 // Create
 exports.createProduct = (req, res) => {
@@ -9,13 +9,15 @@ exports.createProduct = (req, res) => {
     INSERT INTO produtos (nome, descricao, preco, quantidadeEstoque, dataCriacao)
     VALUES (?, ?, ?, ?, ?)
   `);
-  stmt.run(nome, descricao, preco, quantidadeEstoque, dataCriacao, (err) => {
+
+  stmt.run(nome, descricao, preco, quantidadeEstoque, dataCriacao, function(err) {
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
-      res.status(201).json({ message: 'Produto criado com sucesso.' });
+      res.status(201).json({ message: 'Produto criado com sucesso.', id: this.lastID });
     }
   });
+
   stmt.finalize();
 };
 
@@ -55,6 +57,7 @@ exports.updateProduct = (req, res) => {
     SET nome = ?, descricao = ?, preco = ?, quantidadeEstoque = ?
     WHERE id = ?
   `);
+
   stmt.run(nome, descricao, preco, quantidadeEstoque, id, (err) => {
     if (err) {
       res.status(500).json({ error: err.message });
@@ -62,6 +65,7 @@ exports.updateProduct = (req, res) => {
       res.status(200).json({ message: 'Produto atualizado com sucesso.' });
     }
   });
+
   stmt.finalize();
 };
 
@@ -77,5 +81,6 @@ exports.deleteProduct = (req, res) => {
       res.status(200).json({ message: 'Produto deletado com sucesso.' });
     }
   });
+
   stmt.finalize();
 };
