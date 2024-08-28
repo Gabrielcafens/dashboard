@@ -11,7 +11,7 @@ const generateRandomPassword = (length = 8) => {
 
 // Criar um novo usuário
 exports.createUser = (req, res) => {
-  const { nome, email, senha } = req.body;
+  const { nome, email, senha, status = 'ativo' } = req.body; // Valor padrão para status
   const dataCriacao = new Date().toISOString();
 
   // Verificar se o e-mail já está em uso
@@ -29,15 +29,15 @@ exports.createUser = (req, res) => {
         return res.status(500).json({ message: err.message });
       }
 
-      // Inserir o novo usuário no banco de dados com a senha em hash
+      // Inserir o novo usuário no banco de dados com a senha em hash e status
       db.run(
-        `INSERT INTO usuarios (nome, email, senha, dataCriacao) VALUES (?, ?, ?, ?)`,
-        [nome, email, hash, dataCriacao],
+        `INSERT INTO usuarios (nome, email, senha, status, dataCriacao) VALUES (?, ?, ?, ?, ?)`,
+        [nome, email, hash, status, dataCriacao],
         function (err) {
           if (err) {
             return res.status(400).json({ message: err.message });
           }
-          res.status(201).json({ id: this.lastID, nome, email, dataCriacao });
+          res.status(201).json({ id: this.lastID, nome, email, status, dataCriacao });
         }
       );
     });
@@ -71,7 +71,7 @@ exports.getUserById = (req, res) => {
 // Atualizar um usuário por ID
 exports.updateUser = (req, res) => {
   const { id } = req.params;
-  const { nome, email, senha } = req.body;
+  const { nome, email, senha, status } = req.body;
 
   const updateFields = [];
   const values = [];
@@ -93,6 +93,11 @@ exports.updateUser = (req, res) => {
       updateFields.push('senha = ?');
       values.push(hash);
       
+      if (status) {
+        updateFields.push('status = ?');
+        values.push(status);
+      }
+
       db.run(
         `UPDATE usuarios SET ${updateFields.join(', ')} WHERE id = ?`,
         [...values, id],
@@ -110,6 +115,11 @@ exports.updateUser = (req, res) => {
     return; // Evita que a execução continue após o hash
   }
 
+  if (status) {
+    updateFields.push('status = ?');
+    values.push(status);
+  }
+
   db.run(
     `UPDATE usuarios SET ${updateFields.join(', ')} WHERE id = ?`,
     [...values, id],
@@ -124,6 +134,7 @@ exports.updateUser = (req, res) => {
     }
   );
 };
+
 
 // Deletar um usuário por ID
 exports.deleteUser = (req, res) => {
@@ -160,15 +171,14 @@ exports.loginUser = (req, res) => {
         return res.status(401).json({ message: 'Senha incorreta' });
       }
 
+      // Gerar o token JWT
       const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secreta-chave', { expiresIn: '1h' });
-
-      // Salvar o token
-      saveToken(token);
 
       res.json({ message: 'Login bem-sucedido', token });
     });
   });
 };
+
 
 
 
