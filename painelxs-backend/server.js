@@ -3,8 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config(); // Carregar variáveis de ambiente
-
+require('dotenv').config();
 // Criar a instância do aplicativo Express
 const app = express();
 app.use(express.json()); // Usado para análise de JSON
@@ -19,11 +18,13 @@ app.use(cors({
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const produtosRoutes = require('./routes/produtosRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
-
+const pedidosRoutes = require('./routes/pedidosRoutes');
 // Usar as rotas
 app.use('/dashboard', dashboardRoutes);
 app.use('/produtos', produtosRoutes);
 app.use('/usuarios', usuariosRoutes);
+app.use('/pedidos', pedidosRoutes);
+
 
 // Funções para salvar e carregar o token
 const saveToken = (token) => {

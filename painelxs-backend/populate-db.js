@@ -11,66 +11,65 @@ const getRandomDate = () => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).toISOString().split('T')[0];
 };
 
-// Função para gerar um nome aleatório de produto
-const getRandomProductName = () => {
-  const products = ['Camiseta', 'Calça', 'Tênis', 'Jaqueta', 'Boné', 'Bolsa', 'Óculos', 'Relógio'];
-  return products[Math.floor(Math.random() * products.length)];
-};
-
-// Função para gerar uma descrição aleatória
-const getRandomDescription = () => {
-  const descriptions = [
-    'Produto de alta qualidade.',
-    'Ótimo para o dia a dia.',
-    'Desenvolvido com materiais premium.',
-    'Confortável e elegante.',
-    'A escolha perfeita para você.',
-  ];
-  return descriptions[Math.floor(Math.random() * descriptions.length)];
-};
-
-// Função para gerar um preço aleatório
-const getRandomPrice = () => (Math.random() * (500 - 10) + 10).toFixed(2); // Preço entre 10 e 500
-
-// Função para gerar uma quantidade em estoque aleatória
-const getRandomStockQuantity = () => getRandomInt(0, 100); // Quantidade entre 0 e 100
-
-// Inserir dados aleatórios
-const insertRandomProducts = (numRecords) => {
-  const stmt = db.prepare(`
-    INSERT INTO produtos (nome, descricao, preco, quantidadeEstoque, dataCriacao)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-
-  let count = 0;
-
-  const insertNext = () => {
-    if (count < numRecords) {
-      const nome = getRandomProductName();
-      const descricao = getRandomDescription();
-      const preco = getRandomPrice();
-      const quantidadeEstoque = getRandomStockQuantity();
-      const dataCriacao = getRandomDate();
-
-      stmt.run(nome, descricao, preco, quantidadeEstoque, dataCriacao, (err) => {
-        if (err) {
-          console.error('Erro ao inserir dados:', err.message);
-        } else {
-          console.log(`Produto ${count + 1} inserido.`);
-          count++;
-          insertNext();
-        }
-      });
-    } else {
-      stmt.finalize(() => {
-        console.log(`Dados aleatórios de produtos inseridos com sucesso.`);
-        db.close();
-      });
+// Função para obter IDs de produtos existentes
+const getProductIds = (callback) => {
+  db.all('SELECT id FROM produtos', [], (err, rows) => {
+    if (err) {
+      throw err;
     }
-  };
-
-  insertNext();
+    callback(rows.map(row => row.id));
+  });
 };
 
-// Inserir 10 registros aleatórios
-insertRandomProducts(10);
+// Função para obter IDs de usuários existentes
+const getUserIds = (callback) => {
+  db.all('SELECT id FROM usuarios', [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    callback(rows.map(row => row.id));
+  });
+};
+
+// Inserir dados aleatórios de pedidos
+const insertRandomOrders = (numRecords) => {
+  getProductIds((productIds) => {
+    getUserIds((userIds) => {
+      const stmt = db.prepare(`
+        INSERT INTO pedidos (cliente_id, produto_id, quantidade, dataPedido)
+        VALUES (?, ?, ?, ?)
+      `);
+
+      let count = 0;
+
+      const insertNext = () => {
+        if (count < numRecords) {
+          const cliente_id = userIds[getRandomInt(0, userIds.length - 1)];
+          const produto_id = productIds[getRandomInt(0, productIds.length - 1)];
+          const quantidade = getRandomInt(1, 5); // Quantidade entre 1 e 5
+          const dataPedido = getRandomDate();
+
+          stmt.run(cliente_id, produto_id, quantidade, dataPedido, (err) => {
+            if (err) {
+              console.error('Erro ao inserir dados:', err.message);
+            } else {
+              console.log(`Pedido ${count + 1} inserido.`);
+              count++;
+              insertNext();
+            }
+          });
+        } else {
+          stmt.finalize(() => {
+            console.log(`Dados aleatórios de pedidos inseridos com sucesso.`);
+            db.close();
+          });
+        }
+      };
+
+      insertNext();
+    });
+  });
+};
+
+// Inserir 10 registros aleatórios de pedidos
+insertRandomOrders(10);
