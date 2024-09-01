@@ -1,5 +1,4 @@
 import PedidosPage from "../../components/pedidos";
-import Produtos from "../../components/pedidos";
 
 export default function UserListPage() {
   return (

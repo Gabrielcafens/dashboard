@@ -17,12 +17,11 @@ import { Cross2Icon, PlusIcon } from '@radix-ui/react-icons';
 import { Input } from '../ui/input';
 
 interface PedidoData {
-  id: number;
+  id?: number;
   produto_id: number;
   cliente_id: number;
-  usuario_id: number | null;
   quantidade: number;
-  dataPedido: string;
+  dataPedido?: string;
 }
 
 const PedidosPage = () => {
@@ -37,9 +36,12 @@ const PedidosPage = () => {
   useEffect(() => {
     const fetchPedidos = async () => {
       try {
+        console.log('Fetching pedidos...');
         const response = await axios.get('http://localhost:3001/pedidos');
+        console.log('Pedidos fetched:', response.data);
         setPedidos(response.data);
       } catch (err) {
+        console.error('Error fetching pedidos:', err);
         setError('Erro ao carregar os pedidos.');
       } finally {
         setLoading(false);
@@ -52,19 +54,41 @@ const PedidosPage = () => {
   const handleSavePedido = async () => {
     if (isSubmitting) return;
 
+    const updatedPedido = {
+      ...pedido,
+      quantidade: Number(pedido.quantidade),
+      dataPedido: pedido.dataPedido || new Date().toISOString(),
+    };
+
+    console.log('Preparing to save pedido:', updatedPedido);
+
+    // Validations
+    if (!updatedPedido.produto_id || !updatedPedido.cliente_id || !updatedPedido.quantidade) {
+      console.error('Validation failed: Missing required fields');
+      setError('Todos os campos obrigatórios devem ser preenchidos.');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
+
       if (isEditing && pedido.id) {
-        await axios.put(`http://localhost:3001/pedidos/${pedido.id}`, pedido);
+        console.log('Updating pedido:', updatedPedido);
+        await axios.put(`http://localhost:3001/pedidos/${pedido.id}`, updatedPedido);
       } else {
-        await axios.post('http://localhost:3001/pedidos', pedido);
+        console.log('Creating pedido:', updatedPedido);
+        const response = await axios.post('http://localhost:3001/pedidos', updatedPedido);
+        console.log('Pedido created with ID:', response.data.id);
       }
-      const response = await axios.get<PedidoData[]>('http://localhost:3001/pedidos');
+
+      const response = await axios.get('http://localhost:3001/pedidos');
+      console.log('Pedidos updated:', response.data);
       setPedidos(response.data);
       setPedido({});
       setDialogOpen(false);
       setIsEditing(false);
     } catch (err) {
+      console.error('Error saving pedido:', err);
       setError(isEditing ? 'Erro ao atualizar pedido.' : 'Erro ao adicionar pedido.');
     } finally {
       setIsSubmitting(false);
@@ -72,6 +96,7 @@ const PedidosPage = () => {
   };
 
   const handleEditPedido = (pedido: PedidoData) => {
+    console.log('Editing pedido:', pedido);
     setPedido(pedido);
     setIsEditing(true);
     setDialogOpen(true);
@@ -80,10 +105,14 @@ const PedidosPage = () => {
   const handleDeletePedido = async (id: number) => {
     try {
       setIsSubmitting(true);
+      console.log('Deleting pedido ID:', id);
       await axios.delete(`http://localhost:3001/pedidos/${id}`);
+      console.log('Pedido deleted.');
       const response = await axios.get<PedidoData[]>('http://localhost:3001/pedidos');
+      console.log('Pedidos updated:', response.data);
       setPedidos(response.data);
     } catch (err) {
+      console.error('Error deleting pedido:', err);
       setError('Erro ao excluir pedido.');
     } finally {
       setIsSubmitting(false);
@@ -115,7 +144,6 @@ const PedidosPage = () => {
     <div className="p-4">
       <h1 className="text-4xl font-extrabold mb-4">Pedidos</h1>
 
-      {/* Add/Edit Pedido Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button>
@@ -149,16 +177,6 @@ const PedidosPage = () => {
               />
             </div>
             <div>
-              <label htmlFor="usuario_id" className="block text-sm font-medium text-gray-700">ID do Usuário</label>
-              <Input
-                type="number"
-                name="usuario_id"
-                placeholder="ID do Usuário (opcional)"
-                value={pedido.usuario_id || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
               <label htmlFor="quantidade" className="block text-sm font-medium text-gray-700">Quantidade</label>
               <Input
                 type="number"
@@ -180,7 +198,6 @@ const PedidosPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Order List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {pedidos.map(pedido => (
           <Card key={pedido.id} className="border p-4">
@@ -190,12 +207,11 @@ const PedidosPage = () => {
             <CardContent>
               <p><strong>ID do Produto:</strong> {pedido.produto_id}</p>
               <p><strong>ID do Cliente:</strong> {pedido.cliente_id}</p>
-              <p><strong>ID do Usuário:</strong> {pedido.usuario_id ?? 'Não atribuído'}</p>
               <p><strong>Quantidade:</strong> {pedido.quantidade}</p>
-              <p><strong>Data do Pedido:</strong> {new Date(pedido.dataPedido).toLocaleDateString()}</p>
+              <p><strong>Data do Pedido:</strong> {pedido.dataPedido ? new Date(pedido.dataPedido).toLocaleDateString() : 'Não disponível'}</p>
               <div className="mt-4 flex gap-2">
                 <Button onClick={() => handleEditPedido(pedido)} variant="default">Editar</Button>
-                <Button onClick={() => handleDeletePedido(pedido.id)} variant="destructive">Excluir</Button>
+                <Button onClick={() => handleDeletePedido(pedido.id!)} variant="destructive">Excluir</Button>
               </div>
             </CardContent>
           </Card>

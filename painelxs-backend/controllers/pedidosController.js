@@ -2,20 +2,18 @@ const db = require('../models/Pedidos'); // Certifique-se de que o caminho está
 
 // Create
 exports.createPedido = (req, res) => {
-  const { produtoId, quantidade, usuarioId } = req.body;
+  const { produto_id, quantidade, usuario_id } = req.body;
 
-  if (!produtoId || !quantidade || !usuarioId) {
-    return res.status(400).json({ error: 'Todos os campos (produtoId, quantidade, usuarioId) são necessários.' });
+  if (!produto_id || !quantidade || !usuario_id) {
+    return res.status(400).json({ error: 'Todos os campos (produto_id, quantidade, usuario_id) são necessários.' });
   }
 
-  const dataCriacao = new Date().toISOString();
+  const sql = `
+    INSERT INTO pedidos (produto_id, quantidade, usuario_id)
+    VALUES (?, ?, ?)
+  `;
 
-  const stmt = db.prepare(`
-    INSERT INTO pedidos (produtoId, quantidade, usuarioId, dataCriacao)
-    VALUES (?, ?, ?, ?)
-  `);
-
-  stmt.run(produtoId, quantidade, usuarioId, dataCriacao, function(err) {
+  db.run(sql, [produto_id, quantidade, usuario_id], function(err) {
     if (err) {
       console.error("Erro ao criar pedido:", err.message);
       res.status(500).json({ error: err.message });
@@ -24,8 +22,6 @@ exports.createPedido = (req, res) => {
       res.status(201).json({ message: 'Pedido criado com sucesso.', id: this.lastID });
     }
   });
-
-  stmt.finalize();
 };
 
 // Read - Todos
@@ -57,41 +53,37 @@ exports.getPedidoById = (req, res) => {
 // Update
 exports.updatePedido = (req, res) => {
   const { id } = req.params;
-  const { produtoId, quantidade, usuarioId } = req.body;
+  const { produto_id, quantidade, usuario_id } = req.body;
 
-  if (!produtoId || !quantidade || !usuarioId) {
-    return res.status(400).json({ error: 'Todos os campos (produtoId, quantidade, usuarioId) são necessários.' });
+  if (!produto_id || !quantidade || !usuario_id) {
+    return res.status(400).json({ error: 'Todos os campos (produto_id, quantidade, usuario_id) são necessários.' });
   }
 
-  const stmt = db.prepare(`
+  const sql = `
     UPDATE pedidos
-    SET produtoId = ?, quantidade = ?, usuarioId = ?
+    SET produto_id = ?, quantidade = ?, usuario_id = ?
     WHERE id = ?
-  `);
+  `;
 
-  stmt.run(produtoId, quantidade, usuarioId, id, (err) => {
+  db.run(sql, [produto_id, quantidade, usuario_id, id], (err) => {
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
       res.status(200).json({ message: 'Pedido atualizado com sucesso.' });
     }
   });
-
-  stmt.finalize();
 };
 
 // Delete
 exports.deletePedido = (req, res) => {
   const { id } = req.params;
 
-  const stmt = db.prepare('DELETE FROM pedidos WHERE id = ?');
-  stmt.run(id, (err) => {
+  const sql = 'DELETE FROM pedidos WHERE id = ?';
+  db.run(sql, [id], (err) => {
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
       res.status(200).json({ message: 'Pedido deletado com sucesso.' });
     }
   });
-
-  stmt.finalize();
 };
