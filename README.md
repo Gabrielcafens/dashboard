@@ -216,8 +216,6 @@ Este projeto está licenciado sob a [MIT License](LICENSE). Veja o arquivo LICEN
 
 ## Observações
 
-- Este projeto está em constante desenvolvimento e novas funcionalidades serão adicionadas futuramente.
-
 ```                         ___
 
                           ___
