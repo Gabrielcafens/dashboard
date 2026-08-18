@@ -52,13 +52,33 @@ exports.updateProduct = (req, res) => {
   const { id } = req.params;
   const { nome, descricao, preco, quantidadeEstoque } = req.body;
 
-  const stmt = db.prepare(`
-    UPDATE produtos
-    SET nome = ?, descricao = ?, preco = ?, quantidadeEstoque = ?
-    WHERE id = ?
-  `);
+  const updateFields = [];
+  const values = [];
 
-  stmt.run(nome, descricao, preco, quantidadeEstoque, id, (err) => {
+  if (nome !== undefined) {
+    updateFields.push('nome = ?');
+    values.push(nome);
+  }
+  if (descricao !== undefined) {
+    updateFields.push('descricao = ?');
+    values.push(descricao);
+  }
+  if (preco !== undefined) {
+    updateFields.push('preco = ?');
+    values.push(preco);
+  }
+  if (quantidadeEstoque !== undefined) {
+    updateFields.push('quantidadeEstoque = ?');
+    values.push(quantidadeEstoque);
+  }
+
+  if (updateFields.length === 0) {
+    return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
+  }
+
+  const stmt = db.prepare(`UPDATE produtos SET ${updateFields.join(', ')} WHERE id = ?`);
+
+  stmt.run(...values, id, (err) => {
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
